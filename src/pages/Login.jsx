@@ -3,7 +3,7 @@ import { supabase } from "../supabaseClient";
 import { useNavigate } from "react-router-dom";
 
 export default function Login() {
-  const [input, setInput] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const navigate = useNavigate();
@@ -12,29 +12,15 @@ export default function Login() {
     e.preventDefault();
     setErrorMsg("");
 
-    let response;
-
-    if (input.includes("@")) {
-      response = await supabase.auth.signInWithPassword({
-        email: input,
-        password: password,
-      });
-    } else {
-      response = await supabase.auth.signInWithPassword({
-        phone: input,
-        password: password,
-      });
-    }
-
-    const { data, error } = response;
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: email,
+      password: password,
+    });
 
     if (error) {
-      console.log("Erro:", error.message);
       setErrorMsg("E-mail ou palavra passe incorreto.");
     } else {
-      // Salvar usuário localmente (simulação para rotas protegidas)
-      localStorage.setItem("user", input);
-      navigate("/futebol"); // ou dashboard
+      navigate("/futebol");
     }
   };
 
@@ -44,10 +30,10 @@ export default function Login() {
       {errorMsg && <p className="text-red-600 mb-2">{errorMsg}</p>}
       <form onSubmit={handleLogin}>
         <input
-          type="text"
-          placeholder="Seu e-mail ou telefone"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
+          type="email"
+          placeholder="Seu e-mail"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
           className="w-full p-2 mb-4 border rounded"
           required
         />

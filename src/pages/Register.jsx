@@ -4,18 +4,18 @@ import { supabase } from "../supabaseClient";
 
 export default function Register() {
   const [email, setEmail] = useState("");
-  const [senha, setSenha] = useState("");
+  const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
   const handleRegister = async () => {
-    if (!email || !senha) {
+    if (!email || !password) {
       alert("Preencha todos os campos.");
       return;
     }
 
     const { data, error } = await supabase.auth.signUp({
       email,
-      password: senha,
+      password,
     });
 
     if (error) {
@@ -25,10 +25,18 @@ export default function Register() {
         alert("Erro ao registrar: " + error.message);
       }
     } else {
-      // Salvar simulação de login local
-      localStorage.setItem("user", email);
-      alert("✅ Registro feito com sucesso!");
-      navigate("/futebol"); // ou dashboard
+      alert("✅ Registrado com sucesso! Fazendo login automático...");
+
+      const { error: loginError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (loginError) {
+        alert("Erro ao fazer login automático: " + loginError.message);
+      } else {
+        navigate("/futebol");
+      }
     }
   };
 
@@ -36,8 +44,8 @@ export default function Register() {
     <div className="flex flex-col items-center justify-center min-h-screen bg-white">
       <h2 className="text-2xl font-bold mb-6">Registrar</h2>
       <input
-        type="text"
-        placeholder="Seu e-mail ou número de telefone"
+        type="email"
+        placeholder="Seu e-mail"
         className="border mb-4 p-2 rounded w-72"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
@@ -46,8 +54,8 @@ export default function Register() {
         type="password"
         placeholder="Palavra-passe"
         className="border mb-4 p-2 rounded w-72"
-        value={senha}
-        onChange={(e) => setSenha(e.target.value)}
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
       />
       <button
         onClick={handleRegister}
