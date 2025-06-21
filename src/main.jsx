@@ -2,15 +2,15 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
 import "./index.css"; // Tailwind ou CSS global
-import { BrowserRouter } from "react-router-dom";
+import { HashRouter } from "react-router-dom";
 import { CupomProvider } from "./context/CupomContext";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <BrowserRouter>
+    <HashRouter>
       <CupomProvider>
         <App />
       </CupomProvider>
-    </BrowserRouter>
+    </HashRouter>
   </React.StrictMode>
 );
