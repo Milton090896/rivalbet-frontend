@@ -1,0 +1,59 @@
+.ludo-board {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 50px;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(13, 50px);
+  grid-template-rows: repeat(13, 50px);
+  gap: 1px;
+  position: relative;
+  border: 2px solid black;
+  margin-top: 20px;
+  background-color: #fafafa;
+}
+
+.piece {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: red;
+}
+
+.player-0 {
+  background-color: red;
+}
+
+.player-1 {
+  background-color: green;
+}
+
+.player-2 {
+  background-color: blue;
+}
+
+.player-3 {
+  background-color: yellow;
+}
+
+.dice-wrapper {
+  margin-top: 20px;
+}
+
+.dice-button {
+  padding: 10px 20px;
+  font-size: 20px;
+  cursor: pointer;
+  border: none;
+  background-color: #f0f0f0;
+  border-radius: 5px;
+}
+
+.current-turn {
+  margin-top: 10px;
+  font-size: 18px;
+}

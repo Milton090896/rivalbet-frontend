@@ -1,0 +1,18 @@
+.dice-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.dice-button {
+  font-size: 18px;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: #e0e0e0;
+}
+
+.current-turn {
+  margin-top: 10px;
+  font-size: 16px;
+}

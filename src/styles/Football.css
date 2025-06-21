@@ -1,0 +1,82 @@
+/* src/styles/Football.css */
+.football-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #0a1833;
+  color: #fff;
+  height: 100vh;
+}
+
+.field {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 600px;
+  margin: 30px 0;
+  border: 3px solid #fff;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.half-field {
+  flex: 1;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #123;
+  transition: background-color 0.3s;
+}
+
+.half-field.active {
+  background-color: #256d85;
+  font-weight: bold;
+  border: 2px solid #00f7ff;
+}
+
+.shoot-button {
+  background-color: #00b894;
+  color: white;
+  border: none;
+  padding: 15px 25px;
+  font-size: 18px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 15px;
+  transition: background 0.3s ease;
+}
+
+.shoot-button:hover {
+  background-color: #019877;
+}
+
+.message {
+  margin-top: 20px;
+  font-size: 18px;
+  font-style: italic;
+  text-align: center;
+}
+
+.scoreboard {
+  display: flex;
+  gap: 50px;
+  margin-bottom: 10px;
+}
+
+.player-score {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.player-score span {
+  font-weight: bold;
+}
+
+.player-score h2 {
+  font-size: 36px;
+  margin: 5px 0 0;
+}
