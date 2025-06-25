@@ -15,13 +15,15 @@ export default function ProtectedRoute({ children }) {
 
     getSession();
 
-    const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      setLoading(false);
-    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (_event, session) => {
+        setSession(session);
+        setLoading(false);
+      }
+    );
 
     return () => {
-      authListener?.unsubscribe();
+      subscription.unsubscribe(); // ✅ AGORA SIM funciona
     };
   }, []);
 

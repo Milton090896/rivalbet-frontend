@@ -1,53 +1,29 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const jogosFicticios = [
-  { id: 1, casa: "Real Madrid", fora: "Manchester City", hora: "18:00" },
-  { id: 2, casa: "Bayern de Munique", fora: "Arsenal", hora: "20:00" },
-  { id: 3, casa: "Barcelona", fora: "Inter de Milão", hora: "17:30" },
-  { id: 4, casa: "PSG", fora: "Juventus", hora: "21:00" },
-  { id: 5, casa: "Liverpool", fora: "Atlético de Madrid", hora: "19:45" },
-  { id: 6, casa: "Chelsea", fora: "Napoli", hora: "16:30" },
-  { id: 7, casa: "AC Milan", fora: "Dortmund", hora: "18:15" },
-  { id: 8, casa: "Ajax", fora: "RB Leipzig", hora: "20:45" },
-  { id: 9, casa: "Benfica", fora: "Tottenham", hora: "22:00" },
-  { id: 10, casa: "Porto", fora: "Roma", hora: "17:00" },
-
-  // Novos jogos adicionados:
-  { id: 11, casa: "Flamengo", fora: "Palmeiras", hora: "15:00" },
-  { id: 12, casa: "River Plate", fora: "Boca Juniors", hora: "16:00" },
-  { id: 13, casa: "Al Ahly", fora: "Wydad", hora: "14:30" },
-  { id: 14, casa: "Sundowns", fora: "Raja Casablanca", hora: "13:45" },
-  { id: 15, casa: "Zamalek", fora: "Espérance", hora: "17:30" },
-  { id: 16, casa: "TP Mazembe", fora: "Simba SC", hora: "18:00" },
-  { id: 17, casa: "Orlando Pirates", fora: "Kaizer Chiefs", hora: "19:00" },
+const jogosFicticiosBasquete = [
+  { id: 1, casa: "Lakers", fora: "Warriors", hora: "19:00" },
+  { id: 2, casa: "Bucks", fora: "Nets", hora: "20:30" },
+  { id: 3, casa: "Heat", fora: "Celtics", hora: "18:00" },
+  { id: 4, casa: "Clippers", fora: "Suns", hora: "21:00" },
+  { id: 5, casa: "Jazz", fora: "Raptors", hora: "19:45" },
+  { id: 6, casa: "76ers", fora: "Nuggets", hora: "17:30" },
 ];
 
-const mercadosDisponiveis = [
-  "Ambas equipes marcam: Sim",
-  "Ambas equipes marcam: Não",
-  "Acima de 2.5 gols",
-  "Abaixo de 2.5 gols",
-  "Vitória da casa",
-  "Vitória do visitante",
-  "Empate",
-  "Acima de 4 cartões amarelos",
-  "Abaixo de 4 cartões amarelos",
+const mercadosDisponiveisBasquete = [
+  "Vencedor da partida",
+  "Vencedor do 1º quarto",
+  "Vencedor do 2º quarto",
+  "Vencedor do 3º quarto",
+  "Vencedor do 4º quarto",
+  "Total acima de 210.5 pontos",
+  "Total abaixo de 210.5 pontos",
 ];
 
-export default function Futebol() {
+export default function Basquete() {
   const [apostas, setApostas] = useState([]);
   const [jogoSelecionadoId, setJogoSelecionadoId] = useState(null);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    // const apostasSalvas = JSON.parse(localStorage.getItem("apostas") || "[]");
-    // setApostas(apostasSalvas);
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem("apostas", JSON.stringify(apostas));
-  }, [apostas]);
 
   const selecionarJogo = (jogo) => {
     if (apostas.length >= 10 && !apostas.find((a) => a.jogo.id === jogo.id)) {
@@ -69,10 +45,10 @@ export default function Futebol() {
 
   return (
     <div className="p-4 bg-gray-200 min-h-screen">
-      <h2 className="text-2xl font-bold mb-4">Jogos Fictícios da Champions</h2>
+      <h2 className="text-2xl font-bold mb-4">Jogos Fictícios de Basquetebol</h2>
 
       <ul className="space-y-3">
-        {jogosFicticios.map((jogo) => {
+        {jogosFicticiosBasquete.map((jogo) => {
           const selecionado = isSelecionado(jogo.id);
           return (
             <li
@@ -96,7 +72,7 @@ export default function Futebol() {
                 <div className="mt-3">
                   <div className="text-sm font-medium mb-2">Escolher mercado:</div>
                   <div className="flex flex-wrap gap-2">
-                    {mercadosDisponiveis.map((mercado) => (
+                    {mercadosDisponiveisBasquete.map((mercado) => (
                       <button
                         key={mercado}
                         className="bg-blue-600 hover:bg-blue-800 text-white px-3 py-1 rounded"

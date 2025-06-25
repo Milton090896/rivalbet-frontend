@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";  // <-- importar useNavigate
 
 export default function TorneioFutebol() {
   const [numJogadores, setNumJogadores] = useState("");
@@ -6,9 +7,11 @@ export default function TorneioFutebol() {
   const [mensagemAviso, setMensagemAviso] = useState("");
   const [mensagemErroJogo, setMensagemErroJogo] = useState("");
 
+  const navigate = useNavigate();  // <-- criar navigate
+
   const limiteMin = 7;
   const limiteMax = 16;
-  const jogosMinimos = 10;
+  const jogosMinimos = 5;  // <-- aqui está o ajuste, mudou de 10 para 5
   const taxaCasa = 0.10;
 
   const validarNumJogadores = (num) => {
@@ -58,10 +61,11 @@ export default function TorneioFutebol() {
   const handleEntrarTorneio = () => {
     const num = parseInt(numJogadores, 10);
     if (isNaN(num) || num < jogosMinimos) {
-      setMensagemErroJogo("⚠️ O número de jogos selecionados está abaixo do mínimo autorizado para torneios (mínimo: 10 jogos).");
+      setMensagemErroJogo(`⚠️ O número de jogos selecionados está abaixo do mínimo autorizado para torneios (mínimo: ${jogosMinimos} jogos).`);
     } else {
       setMensagemErroJogo("");
-      alert("✅ Entrada no torneio registrada com sucesso!");
+      // Em vez do alert, faz o redirecionamento para página de processamento
+      navigate("/torneio/processando");
     }
   };
 

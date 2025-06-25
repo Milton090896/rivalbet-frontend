@@ -3,13 +3,14 @@ import React, { useState, useMemo } from "react";
 // 30 jogadores fictícios, 25 online e 5 offline
 const jogadoresFicticios = Array.from({ length: 30 }, (_, i) => ({
   id: i + 1,
-  nome: `Jogador ${i + 1}`,
+  nome: `User ${i + 1}`,
   online: i < 25, // primeiros 25 online, últimos 5 offline
 }));
 
 export default function SelecionarAdversario() {
   const [valorAposta, setValorAposta] = useState("");
   const [desafiados, setDesafiados] = useState([]);
+  const [automaticoUsado, setAutomaticoUsado] = useState(false);
 
   // Calcula o ganho líquido com 10% de comissão da casa
   const ganho = useMemo(() => {
@@ -23,9 +24,24 @@ export default function SelecionarAdversario() {
       alert("Por favor, insira um valor válido de aposta antes de desafiar.");
       return;
     }
+
     setDesafiados((old) =>
       old.includes(id) ? old.filter((x) => x !== id) : [...old, id]
     );
+  };
+
+  const desafioAutomatico = () => {
+    if (!valorAposta || parseFloat(valorAposta) <= 0) {
+      alert("Por favor, insira um valor válido de aposta antes de desafiar automaticamente.");
+      return;
+    }
+
+    const onlineIds = jogadoresFicticios
+      .filter((j) => j.online)
+      .map((j) => j.id);
+
+    setDesafiados(onlineIds);
+    setAutomaticoUsado(true);
   };
 
   return (
@@ -46,9 +62,23 @@ export default function SelecionarAdversario() {
           placeholder="Ex: 100"
         />
         <div className="font-semibold text-lg text-green-700">
-          Possível ganho:{" "}
-          <span className="text-green-900">{ganho} MZN</span>
+          Possível ganho: <span className="text-green-900">{ganho} MZN</span>
         </div>
+      </div>
+
+      {/* Botão de desafio automático */}
+      <div className="mb-6 text-center">
+        <button
+          onClick={desafioAutomatico}
+          disabled={automaticoUsado}
+          className={`px-5 py-2 rounded font-bold ${
+            automaticoUsado
+              ? "bg-gray-400 text-white cursor-not-allowed"
+              : "bg-blue-600 hover:bg-blue-800 text-white"
+          }`}
+        >
+          Desafio Automático
+        </button>
       </div>
 
       <ul className="space-y-3 max-h-[500px] overflow-y-auto">
@@ -70,7 +100,7 @@ export default function SelecionarAdversario() {
               </div>
 
               <button
-                disabled={!jogador.online}
+                disabled={!jogador.online || isDesafiado}
                 onClick={() => toggleDesafiar(jogador.id)}
                 className={`px-4 py-2 rounded font-semibold transition-colors ${
                   isDesafiado
@@ -80,7 +110,11 @@ export default function SelecionarAdversario() {
                     : "bg-gray-400 cursor-not-allowed"
                 }`}
               >
-                {isDesafiado ? "Desafiado" : "Desafiar"}
+                {isDesafiado
+                  ? automaticoUsado
+                    ? "Desafiado"
+                    : "Desafiado"
+                  : "Desafiar"}
               </button>
             </li>
           );
