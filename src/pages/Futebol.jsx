@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import "@fortawesome/fontawesome-free/css/all.min.css"; // Importa ícones
 
 const jogosFicticios = [
   { id: 1, casa: "Real Madrid", fora: "Manchester City", hora: "18:00" },
@@ -12,8 +13,6 @@ const jogosFicticios = [
   { id: 8, casa: "Ajax", fora: "RB Leipzig", hora: "20:45" },
   { id: 9, casa: "Benfica", fora: "Tottenham", hora: "22:00" },
   { id: 10, casa: "Porto", fora: "Roma", hora: "17:00" },
-
-  // Novos jogos adicionados:
   { id: 11, casa: "Flamengo", fora: "Palmeiras", hora: "15:00" },
   { id: 12, casa: "River Plate", fora: "Boca Juniors", hora: "16:00" },
   { id: 13, casa: "Al Ahly", fora: "Wydad", hora: "14:30" },
@@ -69,7 +68,10 @@ export default function Futebol() {
 
   return (
     <div className="p-4 bg-gray-200 min-h-screen">
-      <h2 className="text-2xl font-bold mb-4">Jogos Fictícios da Champions</h2>
+      <h2 className="text-2xl font-bold mb-4 flex items-center">
+        <i className="fas fa-futbol text-green-600 mr-2"></i>
+        Jogos Fictícios da Champions
+      </h2>
 
       <ul className="space-y-3">
         {jogosFicticios.map((jogo) => {

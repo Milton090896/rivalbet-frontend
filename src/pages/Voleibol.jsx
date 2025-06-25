@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import "@fortawesome/fontawesome-free/css/all.min.css"; // Importa ícones Font Awesome
 
 const jogosFicticiosVolei = [
   { id: 1, casa: "Brasil", fora: "Itália", hora: "15:00" },
@@ -46,7 +47,10 @@ export default function Voleibol() {
 
   return (
     <div className="p-4 bg-gray-200 min-h-screen">
-      <h2 className="text-2xl font-bold mb-4">Jogos Fictícios de Voleibol</h2>
+      <h2 className="text-2xl font-bold mb-4 flex items-center">
+        <i className="fas fa-volleyball-ball text-yellow-600 mr-2"></i>
+        Jogos Fictícios de Voleibol
+      </h2>
 
       <ul className="space-y-3">
         {jogosFicticiosVolei.map((jogo) => {

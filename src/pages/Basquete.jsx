@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import "@fortawesome/fontawesome-free/css/all.min.css"; // Importa ícones
 
 const jogosFicticiosBasquete = [
   { id: 1, casa: "Lakers", fora: "Warriors", hora: "19:00" },
@@ -45,7 +46,10 @@ export default function Basquete() {
 
   return (
     <div className="p-4 bg-gray-200 min-h-screen">
-      <h2 className="text-2xl font-bold mb-4">Jogos Fictícios de Basquetebol</h2>
+      <h2 className="text-2xl font-bold mb-4 flex items-center">
+        <i className="fas fa-basketball-ball text-orange-600 mr-2"></i>
+        Jogos Fictícios de Basquetebol
+      </h2>
 
       <ul className="space-y-3">
         {jogosFicticiosBasquete.map((jogo) => {
