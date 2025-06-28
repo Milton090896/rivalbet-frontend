@@ -1,5 +1,9 @@
 import React from "react";
 import { Routes, Route, Link } from "react-router-dom";
+import ModeSelection from "./components/ModeSelection";
+import ConfigBet from "./components/ConfigBet";
+import QuizGame from "./components/QuizGame";
+import RivalQuizManager from "./components/RivalQuizManager";
 
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -14,19 +18,16 @@ import TorneioFutebol from "./pages/TorneioFutebol";
 import ProcessandoTorneio from "./pages/ProcessandoTorneio";
 import SelecionarAdversario from "./pages/SelecionarAdversario";
 
-// Importações do Basquete e Voleibol
 import Basquete from "./pages/Basquete";
 import Voleibol from "./pages/Voleibol";
 
 import logo from "./assets/rivalbet-logo.png";
 
-// Componente de rota protegida
 import PrivateRoute from "./components/ProtectedRoute";
 
 export default function App() {
   return (
     <div className="min-h-screen bg-gray-100 text-gray-900">
-      {/* Barra de navegação */}
       <nav className="bg-blue-700 text-white p-4 flex justify-between items-center">
         <Link to="/">
           <img src={logo} alt="RivalBet Logo" className="h-10 w-auto" />
@@ -44,17 +45,17 @@ export default function App() {
           <Link to="/dashboard" className="hover:underline">Dashboard</Link>
           <Link to="/login" className="hover:underline">Entrar</Link>
           <Link to="/register" className="hover:underline">Registrar</Link>
+          {/* Aqui adiciona o RivalQuiz no menu */}
+          <Link to="/rivalquiz" className="hover:underline">RivalQuiz</Link>
         </div>
       </nav>
 
-      {/* Rotas */}
       <div className="p-4">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
 
-          {/* Rotas protegidas */}
           <Route
             path="/dashboard"
             element={
@@ -128,7 +129,16 @@ export default function App() {
             }
           />
 
-          {/* Página 404 */}
+          {/* Rota para RivalQuiz sem alterar nada do resto */}
+          <Route
+            path="/rivalquiz"
+            element={
+              <PrivateRoute>
+                <RivalQuizManager />
+              </PrivateRoute>
+            }
+          />
+
           <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
