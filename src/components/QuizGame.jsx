@@ -87,37 +87,23 @@ const sessoes = [
   ]
 ];
 
-export default function QuizGame({ modo = "desafio", apostado, participantes, initialBalance, setBalance }) {
-  const [sessaoAtual, setSessaoAtual] = React.useState(0);
-  const [questaoIndex, setQuestaoIndex] = React.useState(0);
-  const [respostas, setRespostas] = React.useState([]);
-  const [mostrarResultado, setMostrarResultado] = React.useState(false);
-  const [acertos, setAcertos] = React.useState(0);
-  const [progresso, setProgresso] = React.useState(100);
-  const [saldo, setSaldoInterno] = React.useState(initialBalance ?? 0);
-  const [opcaoSelecionada, setOpcaoSelecionada] = React.useState(null);
-  const [corBarra, setCorBarra] = React.useState("green");
-  const [correcaoEmCurso, setCorrecaoEmCurso] = React.useState(false);
-  const [contagemFinal, setContagemFinal] = React.useState(30);
-
-  // Atualiza saldo inicial descontando aposta apenas uma vez no início da sessão:
-  React.useEffect(() => {
-    if (apostado && saldo === initialBalance) {
-      if (saldo >= apostado) {
-        setSaldoInterno(saldo - apostado);
-        setBalance && setBalance(saldo - apostado);
-      } else {
-        alert("Saldo insuficiente para apostar!");
-        // Aqui você pode mandar o usuário voltar ou bloquear o jogo
-      }
-    }
-  }, [apostado, saldo, initialBalance, setBalance]);
+export default function QuizGame({ modo = "desafio", apostado = 100, participantes = 10, initialBalance = 2500, setBalance }) {
+  const [sessaoAtual, setSessaoAtual] = useState(0);
+  const [questaoIndex, setQuestaoIndex] = useState(0);
+  const [respostas, setRespostas] = useState([]);
+  const [mostrarResultado, setMostrarResultado] = useState(false);
+  const [acertos, setAcertos] = useState(0);
+  const [progresso, setProgresso] = useState(100);
+  const [saldo, setSaldoInterno] = useState(initialBalance - apostado);
+  const [opcaoSelecionada, setOpcaoSelecionada] = useState(null);
+  const [corBarra, setCorBarra] = useState("green");
+  const [correcaoEmCurso, setCorrecaoEmCurso] = useState(false);
+  const [contagemFinal, setContagemFinal] = useState(30);
 
   const questoes = sessoes[sessaoAtual];
   const questaoAtual = questoes[questaoIndex];
 
-  // Timer da pergunta
-  React.useEffect(() => {
+  useEffect(() => {
     if (!mostrarResultado) {
       const timer = setInterval(() => {
         setProgresso((prev) => {
@@ -133,7 +119,7 @@ export default function QuizGame({ modo = "desafio", apostado, participantes, in
     }
   }, [questaoIndex, mostrarResultado]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (progresso > 50) setCorBarra("green");
     else if (progresso > 25) setCorBarra("lightblue");
     else if (progresso > 10) setCorBarra("orange");
@@ -161,8 +147,7 @@ export default function QuizGame({ modo = "desafio", apostado, participantes, in
     }
   };
 
-  // Correção e atualização de saldo
-  React.useEffect(() => {
+  useEffect(() => {
     if (mostrarResultado && correcaoEmCurso) {
       let countAcertos = 0;
       for (let i = 0; i < questoes.length; i++) {
@@ -172,37 +157,25 @@ export default function QuizGame({ modo = "desafio", apostado, participantes, in
       }
       setAcertos(countAcertos);
 
-      // Calcula ganho
       let ganho = 0;
-
       if (modo === "desafio") {
         if (countAcertos > 5) {
-          ganho = apostado * 2 * 0.9; // Dobro apostado menos 10%
+          ganho = apostado * 2 * 0.9; // vitória
         } else if (countAcertos === 5) {
-          ganho = apostado * 0.9; // Empate, retorna 90% da aposta
+          ganho = apostado * 0.9; // empate
         } else {
-          ganho = 0; // Perdeu
+          ganho = 0; // derrota
         }
       } else if (modo === "torneio") {
         const premioTotal = apostado * participantes * 0.9;
         if (countAcertos > 5) ganho = premioTotal * 0.7;
         else if (countAcertos === 5) ganho = premioTotal * 0.3;
-        else ganho = 0;
       }
 
-      console.log("Modo:", modo);
-      console.log("Acertos:", countAcertos);
-      console.log("Ganho calculado:", ganho);
-      console.log("Saldo antes de atualizar:", saldo);
-
-      // Atualiza saldo final após correção
       const novoSaldo = saldo + ganho;
       setSaldoInterno(novoSaldo);
-      setBalance && setBalance(novoSaldo);
+      setBalance(novoSaldo);
 
-      console.log("Saldo atualizado:", novoSaldo);
-
-      // Contagem regressiva de 30 segundos para próxima sessão
       const interval = setInterval(() => {
         setContagemFinal((prev) => {
           if (prev === 1) {
@@ -226,15 +199,31 @@ export default function QuizGame({ modo = "desafio", apostado, participantes, in
 
   if (mostrarResultado) {
     let ganho = 0;
+    let mensagem = "";
+
     if (modo === "desafio") {
-      if (acertos > 5) ganho = apostado * 2 * 0.9;
-      else if (acertos === 5) ganho = apostado * 0.9;
-      else ganho = 0;
+      if (acertos > 5) {
+        ganho = apostado * 2 * 0.9;
+        mensagem = "🎯 Vitória! Você ganhou a aposta!";
+      } else if (acertos === 5) {
+        ganho = apostado * 0.9;
+        mensagem = "🤝 Empate! Você recebe 90% de volta.";
+      } else {
+        ganho = 0;
+        mensagem = "❌ Derrota. Você perdeu a aposta.";
+      }
     } else if (modo === "torneio") {
       const premioTotal = apostado * participantes * 0.9;
-      if (acertos > 5) ganho = premioTotal * 0.7;
-      else if (acertos === 5) ganho = premioTotal * 0.3;
-      else ganho = 0;
+      if (acertos > 5) {
+        ganho = premioTotal * 0.7;
+        mensagem = "🥇 1º lugar no torneio! 70% do prêmio!";
+      } else if (acertos === 5) {
+        ganho = premioTotal * 0.3;
+        mensagem = "🥈 2º lugar no torneio! 30% do prêmio!";
+      } else {
+        ganho = 0;
+        mensagem = "❌ Fora do pódio. Sem prêmio.";
+      }
     }
 
     return (
@@ -248,15 +237,7 @@ export default function QuizGame({ modo = "desafio", apostado, participantes, in
 
         <h2>🎉 Resultados</h2>
         <p className={acertos > 5 ? "green" : acertos === 5 ? "yellow" : "red"}>
-          {modo === "desafio" ? (
-            acertos > 5 ? "🎯 Vitória! Você ganhou a aposta!" :
-            acertos === 5 ? "🤝 Empate! Você recebe de volta 90%." :
-            "❌ Derrota. Você perdeu sua aposta."
-          ) : (
-            acertos > 5 ? "🥇 1º lugar no torneio! 70% do prêmio!" :
-            acertos === 5 ? "🥈 2º lugar no torneio! 30% do prêmio!" :
-            "❌ Fora do pódio. Sem prêmio."
-          )}
+          {mensagem}
         </p>
         <p>Você acertou <strong>{acertos}</strong> de <strong>{questoes.length}</strong> questões.</p>
         <p>💰 <strong>Ganho: {ganho.toFixed(2)} MZN</strong></p>
