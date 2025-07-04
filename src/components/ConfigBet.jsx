@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 export default function ConfigBet({
   mode,
@@ -10,107 +10,112 @@ export default function ConfigBet({
   onStartGame,
   onBack,
 }) {
-  const minBet = 10;
+  const [mensagemErro, setMensagemErro] = useState("");
 
-  function handleStart() {
-    if (betAmount > balance) {
-      alert("⚠️ Valor da aposta é maior que o saldo disponível!");
+  useEffect(() => {
+    if (Number(betAmount) >= 10 && Number(betAmount) <= balance) {
+      setMensagemErro("");
+    }
+  }, [betAmount, balance]);
+
+  const calcularPremio = () => {
+    const aposta = Number(betAmount);
+    if (isNaN(aposta) || aposta < 10) return null;
+
+    if (mode === "1x1") {
+      const ganhoBruto = aposta * 2;
+      const ganhoLiquido = ganhoBruto * 0.9;
+      return {
+        texto: `💸 Se ganhar, receberá: ${ganhoLiquido.toFixed(2)} MZN (90% de ${ganhoBruto})`,
+      };
+    } else if (mode === "torneio") {
+      const totalPremio = aposta * participants;
+      const liquido = totalPremio * 0.9;
+      const primeiro = (liquido * 0.7).toFixed(2);
+      const segundo = (liquido * 0.3).toFixed(2);
+      return {
+        texto: `🥇 1º lugar: ${primeiro} MZN | 🥈 2º lugar: ${segundo} MZN`,
+      };
+    }
+    return null;
+  };
+
+  const handleStart = () => {
+    const aposta = Number(betAmount);
+
+    if (isNaN(aposta) || aposta < 10) {
+      setMensagemErro("⚠️ Aposta mínima é de 10 MZN.");
       return;
     }
-    if (betAmount < minBet) {
-      alert("⚠️ O valor mínimo para apostar é 10 MZN!");
+
+    if (aposta > balance) {
+      setMensagemErro("⚠️ Saldo insuficiente.");
       return;
     }
-    if (mode === "tournament" && (participants < 7 || participants > 16)) {
-      alert("⚠️ Número de jogadores deve estar entre 7 e 16!");
-      return;
-    }
-    onStartGame({ bet: betAmount, participantsCount: participants });
-  }
+
+    setMensagemErro("");
+    onStartGame({ bet: aposta, participantsCount: Number(participants) });
+  };
+
+  const premio = calcularPremio();
 
   return (
-    <div className="max-w-md mx-auto space-y-6 p-6 bg-white rounded-xl shadow-lg">
-      <h2 className="text-3xl font-bold text-center text-red-600 mb-4">
-        {mode === "1x1" ? "Configurar Aposta - Modo 1x1" : "Configurar Aposta - Modo Torneio"}
+    <div className="max-w-md mx-auto p-6 bg-white rounded-xl shadow-lg border-2 border-blue-600 mt-10">
+      <h2 className="text-2xl font-bold mb-4 text-center text-blue-700">
+        Configurar Aposta ({mode === "1x1" ? "Modo 1x1" : "Torneio"})
       </h2>
-      <div>
-        <label htmlFor="betAmount" className="block mb-2 font-semibold">
-          Valor da aposta (mínimo 10 MZN)
-        </label>
-        <input
-          type="number"
-          id="betAmount"
-          min={minBet}
-          max={balance}
-          value={betAmount}
-          onChange={(e) => setBetAmount(Math.min(Math.max(minBet, Number(e.target.value)), balance))}
-          className="w-full border border-gray-400 rounded px-3 py-2 text-lg"
-        />
+
+      <div className="text-gray-700 mb-2 font-semibold">
+        💰 Saldo disponível: <span className="text-black">{balance.toFixed(2)} MZN</span>
       </div>
 
-      {mode === "tournament" && (
-        <div>
-          <label htmlFor="participants" className="block mb-2 font-semibold">
-            Número de jogadores (7 a 16)
-          </label>
+      <label className="block mb-2 font-medium">Valor da Aposta (mínimo 10 MZN):</label>
+      <input
+        type="number"
+        className="w-full p-3 border rounded-md mb-4"
+        value={betAmount}
+        onChange={(e) => setBetAmount(e.target.value)}
+        placeholder="Digite o valor da aposta"
+      />
+
+      {mode === "torneio" && (
+        <>
+          <label className="block mb-2 font-medium">Número de Participantes:</label>
           <input
             type="number"
-            id="participants"
-            min={7}
-            max={16}
+            className="w-full p-3 border rounded-md mb-4"
             value={participants}
-            onChange={(e) => setParticipants(Math.min(Math.max(7, Number(e.target.value)), 16))}
-            className="w-full border border-gray-400 rounded px-3 py-2 text-lg"
+            onChange={(e) => setParticipants(e.target.value)}
+            placeholder="Ex: 10"
           />
-        </div>
+        </>
       )}
 
-      <div className="mt-4 text-lg font-semibold text-center">
-        {mode === "1x1" ? (
-          <>
-            <p>
-              Potencial ganho se vencer:{" "}
-              <span className="text-green-600">{(betAmount * 1.8 * 0.9).toFixed(2)} MZN</span>
-            </p>
-            <p>
-              Potencial ganho em empate:{" "}
-              <span className="text-yellow-600">{(betAmount * 0.9).toFixed(2)} MZN</span>
-            </p>
-          </>
-        ) : (
-          <>
-            <p>
-              Potencial prêmio 1º lugar:{" "}
-              <span className="text-green-600">{(betAmount * participants * 0.9 * 0.7).toFixed(2)} MZN</span>
-            </p>
-            <p>
-              Potencial prêmio 2º lugar:{" "}
-              <span className="text-yellow-600">{(betAmount * participants * 0.9 * 0.3).toFixed(2)} MZN</span>
-            </p>
-            <p>
-              Prêmio baseado em {participants} jogadores apostando {betAmount.toFixed(2)} MZN
-            </p>
-          </>
-        )}
+      {mensagemErro && (
+        <div className="text-red-600 text-sm font-semibold mb-3">{mensagemErro}</div>
+      )}
+
+      {premio && (
+        <div className="text-green-700 font-medium mb-4">{premio.texto}</div>
+      )}
+
+      <div className="text-xs text-gray-600 italic mb-6">
+        ⚠️ Todos os prêmios exibidos já consideram o desconto de 10% da casa.
       </div>
 
-      <div className="flex justify-center gap-6 mt-6">
+      <div className="flex gap-4">
         <button
           onClick={onBack}
-          className="px-6 py-3 border border-gray-500 rounded-lg hover:bg-gray-100 transition"
+          className="w-1/2 py-3 px-4 bg-gray-300 hover:bg-gray-400 rounded-lg font-bold"
         >
           Voltar
         </button>
         <button
           onClick={handleStart}
-          className="px-8 py-3 bg-red-600 hover:bg-red-700 text-white rounded-xl shadow-lg font-bold transition transform hover:scale-105"
+          className="w-1/2 py-3 px-4 bg-green-600 hover:bg-green-700 text-white rounded-lg font-bold"
         >
-          Iniciar jogo
+          Confirmar aposta
         </button>
-      </div>
-
-      <div className="mt-6 text-lg text-center">
-        Saldo atual: <span className="font-bold text-yellow-600">{balance.toFixed(2)} MZN</span>
       </div>
     </div>
   );
